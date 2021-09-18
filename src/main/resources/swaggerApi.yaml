@@ -1,0 +1,311 @@
+swagger: '2.0'
+info:
+  title: openfeign-demo
+  version: last
+basePath: /demo
+tags:
+  - name: user
+    description: 用户服务
+schemes:
+  - http
+paths:
+  /user/detail:
+    get:
+      tags:
+        - user
+      summary: 获取用户详情
+      description: 获取用户详情信息
+      parameters:
+        - name: id
+          in: query
+          required: false
+          description: 用户ID
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            title: CommonResult
+            properties:
+              respCode:
+                type: integer
+                description: 响应码
+              data:
+                title: UserDetailResult
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: 用户ID
+                  name:
+                    type: string
+                    description: 用户名称
+                  sex:
+                    type: integer
+                    description: 用户性别（1:男,2:女）
+                  bornDate:
+                    type: string
+                    description: 出生日期
+                  phone:
+                    type: string
+                    description: 电话号码
+                  updateTIme:
+                    type: string
+                    description: 更新时间
+                  createTime:
+                    type: string
+                    description: 创建时间
+                description: 响应数据
+                required:
+                  - id
+                  - name
+                  - sex
+                  - bornDate
+                  - phone
+                  - updateTIme
+                  - createTime
+            required:
+              - respCode
+              - data
+  /user/detail/{id}:
+    get:
+      tags:
+        - user
+      summary: 获取用户详情（path）
+      description: 获取用户详情信息
+      parameters:
+        - name: id
+          in: path
+          description: 用户ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            title: CommonResult
+            properties:
+              respCode:
+                type: integer
+                description: 响应码
+              data:
+                title: UserDetailResult
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: 用户ID
+                  name:
+                    type: string
+                    description: 用户名称
+                  sex:
+                    type: integer
+                    description: 用户性别（1:男,2:女）
+                  bornDate:
+                    type: string
+                    description: 出生日期
+                  phone:
+                    type: string
+                    description: 电话号码
+                  updateTIme:
+                    type: string
+                    description: 更新时间
+                  createTime:
+                    type: string
+                    description: 创建时间
+                description: 响应数据
+                required:
+                  - id
+                  - name
+                  - sex
+                  - bornDate
+                  - phone
+                  - updateTIme
+                  - createTime
+            required:
+              - respCode
+              - data
+  /user/list:
+    post:
+      tags:
+        - user
+      summary: 查询用户列表
+      description: ''
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: name
+          in: formData
+          required: false
+          description: 用户名称
+          type: string
+        - name: sex
+          in: formData
+          required: false
+          description: 用户性别
+          type: string
+        - name: bornDateStart
+          in: formData
+          required: false
+          description: 出生日期 - 起始
+          type: string
+        - name: bornDateEnd
+          in: formData
+          required: false
+          description: 出生日期 - 结束
+          type: string
+        - name: phone
+          in: formData
+          required: false
+          description: 电话
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            title: CommonResult
+            properties:
+              respCode:
+                type: string
+                description: 响应码
+              total:
+                type: integer
+                description: 结果总数
+              rows:
+                type: array
+                items:
+                  title: UserDetailResult
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: 用户ID
+                    name:
+                      type: string
+                      description: 用户名称
+                    sex:
+                      type: integer
+                      description: 用户性别（1:男,2:女）
+                    bornDate:
+                      type: string
+                      description: 出生日期
+                    phone:
+                      type: string
+                      description: 电话号码
+                    updateTIme:
+                      type: string
+                      description: 更新时间
+                    createTime:
+                      type: string
+                      description: 创建时间
+                  description: 响应数据
+                  required:
+                    - id
+                    - name
+                    - sex
+                    - bornDate
+                    - phone
+                    - updateTIme
+                    - createTime
+                description: 结果列表
+            required:
+              - respCode
+              - total
+              - rows
+  /user/add:
+    post:
+      tags:
+        - user
+      summary: 新增用户
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - name: userAddParam
+          in: body
+          description: 响应数据
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: 用户名称
+              sex:
+                type: integer
+                description: 用户性别（1:男,2:女）
+              bornDate:
+                type: string
+                description: 出生日期
+              phone:
+                type: string
+                description: 电话号码
+            description: 响应数据
+            required:
+              - name
+              - sex
+              - bornDate
+              - phone
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            title: CommonResult
+            properties:
+              respCode:
+                type: integer
+                description: 响应码
+            required:
+              - respCode
+  /user/update:
+    post:
+      tags:
+        - user
+      summary: 修改用户
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - name: userUpdateParam
+          in: body
+          description: 响应数据
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: 用户ID
+              name:
+                type: string
+                description: 用户名称
+              sex:
+                type: integer
+                description: 用户性别（1:男,2:女）
+              bornDate:
+                type: string
+                description: 出生日期
+              phone:
+                type: string
+                description: 电话号码
+            description: 响应数据
+            required:
+              - name
+              - sex
+              - bornDate
+              - phone
+              - id
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            title: CommonResult
+            properties:
+              respCode:
+                type: integer
+                description: 响应码
+            required:
+              - respCode
