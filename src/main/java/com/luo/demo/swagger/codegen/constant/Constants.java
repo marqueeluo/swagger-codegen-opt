@@ -21,7 +21,9 @@ public class Constants {
     public static final String DOT = ".";
     public static final String RESULT_KEY_RESP_CODE = "respCode";
     public static final String RESULT_KEY_DATA = "data";
+    public static final String RESULT_KEY_MSG = "msg";
     public static final String RESULT_KEY_ROWS = "rows";
+    public static final String RESULT_KEY_TOTAL = "total";
     public static final String HTTP_STATUS_200 = "200";
     public static final String COMMON_RESULT_NAME = "CommonResult";
     public static final String COMMON_RESULT_CLASS = "com.luo.demo.result.CommonResult";

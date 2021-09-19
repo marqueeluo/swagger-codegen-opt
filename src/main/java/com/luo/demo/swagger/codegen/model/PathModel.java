@@ -21,7 +21,8 @@ public class PathModel {
     private String httpMethod;
     private List<String> consumes;
     private List<String> produces;
-    private String returnBaseType;
+    private String returnType;
+    private String returnTypeClass;
     private String returnDataType;
     private List<ParamModel> params;
 

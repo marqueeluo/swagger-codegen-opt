@@ -255,6 +255,9 @@ public class CommonUtils {
      * @return
      */
     public static String path2Camel(String path) {
+        if (isBlankStr(path)) {
+            return path;
+        }
         path = path.replaceAll("/\\{.*?\\}", "");
         String[] pathItems = path.split(Constants.PATH_SEPARATOR);
         if (null == pathItems || 0 >= pathItems.length) {

@@ -20,6 +20,8 @@ public class Config {
     private String apiPackage;
     private String modelPackage;
     private String controllerPackage;
+//    private Boolean allowCommonResult;
+//    private String commonResultPackage;
 
     public String getApiPackage() {
         return Optional.ofNullable(apiPackage)
@@ -35,4 +37,5 @@ public class Config {
         return Optional.ofNullable(controllerPackage)
                 .orElse(CommonUtils.buildStr(basePackage, Constants.CONTROLLER_SUB_PACKAGE));
     }
+
 }

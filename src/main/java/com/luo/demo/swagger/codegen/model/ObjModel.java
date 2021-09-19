@@ -66,11 +66,11 @@ public class ObjModel {
             .name(Constants.COMMON_RESULT_NAME)
             .templateTypes(Arrays.asList("T"))
             .fields(Arrays.asList(
-                    FieldModel.builder().name("respCode").type("Integer").desc("响应码").typeClass("java.lang.Integer").required(true).build(),
-                    FieldModel.builder().name("msg").type("String").desc("消息提示").typeClass("java.lang.String").build(),
-                    FieldModel.builder().name("data").type("T").desc("响应数据").build(),
-                    FieldModel.builder().name("rows").type("List<T>").desc("响应数据列表").typeClass("java.util.list").build(),
-                    FieldModel.builder().name("total").type("Integer").desc("结果总数").typeClass("java.lang.Integer").required(true).build()
+                    FieldModel.builder().name(Constants.RESULT_KEY_RESP_CODE).type("Integer").desc("响应码").typeClass("java.lang.Integer").required(true).build(),
+                    FieldModel.builder().name(Constants.RESULT_KEY_MSG).type("String").desc("消息提示").typeClass("java.lang.String").build(),
+                    FieldModel.builder().name(Constants.RESULT_KEY_DATA).type("T").desc("响应数据").build(),
+                    FieldModel.builder().name(Constants.RESULT_KEY_ROWS).type("List<T>").desc("响应数据列表").typeClass("java.util.list").build(),
+                    FieldModel.builder().name(Constants.RESULT_KEY_TOTAL).type("Integer").desc("结果总数").typeClass("java.lang.Integer").required(true).build()
 
             )).build();
 }

@@ -98,13 +98,13 @@ public class Swagger2ModelConvertor {
         List<Tag> tagList = this.swagger.getTags();
         List<ApiModel> apiModelList = tagList.stream().map(tag -> {
             return ApiModel.builder()
-                    //TODO name待重构为应为名
+                    //name待重构为应为名
                     .name(tag.getName())
                     .desc(buildStrWithDelimiter(Constants.DESC_SEPARATOR, tag.getName(), tag.getDescription()))
                     .basePackage(this.config.getApiPackage())
                     .paths(new ArrayList<>())
-                    //TODO basePath待重构
-                    .basePath("/")
+                    //basePath待重构(m默认为空)
+                    //.basePath(Constants.PATH_SEPARATOR)
                     .build();
         }).collect(Collectors.toList());
         Map<String, ApiModel> apiModelMap = apiModelList.stream()
@@ -119,10 +119,11 @@ public class Swagger2ModelConvertor {
                     this.parsePathModel(pathEntry.getKey(), pathEntry.getValue(), apiModelMap, codegenModel);
                 });
 
-        /** 注册api */
-        //重置api basePath, name
+
+        /** 重置api basePath, name 及其path.path及basePath*/
         AtomicInteger autoIndex = new AtomicInteger(0);
         apiModelList.stream().forEach(apiModel -> this.resetApiModel(apiModel, autoIndex.addAndGet(1)));
+        /** 注册api */
         codegenModel.setApis(apiModelList);
     }
 
@@ -135,7 +136,9 @@ public class Swagger2ModelConvertor {
      * @param index
      */
     private void resetApiModel(ApiModel apiModel, Integer index) {
-        List<String> allApiPathList = apiModel.getPaths().stream().map(PathModel::getPath).collect(Collectors.toList());
+        List<String> allApiPathList = apiModel.getPaths().stream()
+                .map(PathModel::getPath)
+                .collect(Collectors.toList());
         /** 提取共通的basePath前缀 */
         //检查首个path
         String[] firstPathItems = splitPathItems(allApiPathList.get(0));
@@ -160,7 +163,6 @@ public class Swagger2ModelConvertor {
             }
             //没有相同的path前缀，则直接结束其他path的比较，则无共同basePath
             if (0 > samePathItemEndIndex) {
-                basePathItemEndIndex = -1;
                 break;
             }
             //若有共通path前缀，则记录最短匹配的前缀endIndex
@@ -168,16 +170,18 @@ public class Swagger2ModelConvertor {
         }
 
         /** 无共通path前缀，设置apiModel.name为Api{Index} */
-        if (0 > basePathItemEndIndex || Integer.MAX_VALUE == basePathItemEndIndex) {
-            apiModel.setName(buildStr(Constants.DEFAULT_API_NAME, ++index));
+        if (Integer.MAX_VALUE == basePathItemEndIndex) {
+            apiModel.setName(buildStr(Constants.DEFAULT_API_NAME, index));
             return;
         }
 
         /** 存在共同的basePath，则重置PathModel */
         String basePath = buildStr(
                 Constants.PATH_SEPARATOR,
-                buildTypeWithTemplateParam(Constants.PATH_SEPARATOR, Arrays.copyOf(firstPathItems, basePathItemEndIndex + 1))
+                buildStrWithDelimiter(Constants.PATH_SEPARATOR, Arrays.copyOf(firstPathItems, basePathItemEndIndex + 1))
         );
+        //设置pathModel.basePath
+        apiModel.setBasePath(basePath);
         //所有path删除前缀basePath
         apiModel.getPaths().stream().forEach(pathModel -> {
             //设置basePath
@@ -190,7 +194,6 @@ public class Swagger2ModelConvertor {
             }
         });
         /** 根据basePath设置apiModel.name */
-        //TODO 待调查 <User>为何
         apiModel.setName(firstCharUpper(path2Camel(basePath)));
 
     }
@@ -377,7 +380,8 @@ public class Swagger2ModelConvertor {
                     .basePackage(this.config.getModelPackage())
                     .build();
             //生成属性
-            List<FieldModel> fieldModelList = this.parseProperties(bodyParam.getSchema().getProperties(), pathModel, codegenModel, ObjSuffixEnum.PARAM);
+            Model bodyModel = bodyParam.getSchema();
+            List<FieldModel> fieldModelList = this.parseProperties(bodyModel.getProperties(), pathModel, codegenModel, ObjSuffixEnum.PARAM);
             //添加属性到对象
             objModel.setFields(fieldModelList);
             /** 注册对象 */
@@ -390,6 +394,7 @@ public class Swagger2ModelConvertor {
                     .desc(objModel.getDesc())
                     .type(objModel.getName())
                     .typeClass(objModel.getTypeClass())
+                    .required(curParam.getRequired())
                     .build();
             //添加参数到path中
             pathModel.getParams().add(paramModel);
@@ -408,12 +413,14 @@ public class Swagger2ModelConvertor {
      */
     private void parseResponse200(Operation curOperation, PathModel pathModel, CodegenModel codegenModel) {
         //设置默认path.returnType = CommonResult
-        pathModel.setReturnBaseType(Constants.COMMON_RESULT_NAME);
+        pathModel.setReturnType(Constants.COMMON_RESULT_NAME);
+        pathModel.setReturnTypeClass(ObjModel.CommonResultObjModel.getTypeClass());
+
         /** 解析返回值 */
         Optional.ofNullable(curOperation.getResponses())
                 .map(statusRespMap -> statusRespMap.get(Constants.HTTP_STATUS_200))
-                .map(response -> response.getResponseSchema())
-                .map(model -> model.getProperties())
+                .map(Response::getResponseSchema)
+                .map(Model::getProperties)
                 .ifPresent(respPropMap -> {
                     ObjModel resultObjModel = null;
                     /** CommonResult（包含respCode, msg, data, rows, total）模式 */
@@ -427,13 +434,13 @@ public class Swagger2ModelConvertor {
                         if (null != dataProp && dataProp instanceof ObjectProperty) {
                             resultObjModel = this.parseObjectProperty((ObjectProperty) dataProp, pathModel, codegenModel, ObjSuffixEnum.RESULT);
                             //设置path.returnType = CommonResult<resultObj>
-                            pathModel.setReturnBaseType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
+                            pathModel.setReturnType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
                         }
                         //解析rows ArrayProperty
                         else if (null != rowsProp && rowsProp instanceof ArrayProperty) {
                             resultObjModel = this.parseArrayProperty((ArrayProperty) rowsProp, pathModel, codegenModel, ObjSuffixEnum.RESULT);
                             //设置path.returnType = CommonResult<array.itemType>
-                            pathModel.setReturnBaseType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
+                            pathModel.setReturnType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
                         }
                     }
                     /** 其他返回结果 */
@@ -449,7 +456,8 @@ public class Swagger2ModelConvertor {
                         /** 注册对象 */
                         resultObjModel = codegenModel.registerObjModel(resultObjModel);
                         /** 设置path.returnType */
-                        pathModel.setReturnBaseType(resultObjModel.getName());
+                        pathModel.setReturnType(resultObjModel.getName());
+                        pathModel.setReturnTypeClass(resultObjModel.getTypeClass());
                     }
                 });
     }
@@ -535,8 +543,7 @@ public class Swagger2ModelConvertor {
                                 .type(propObjModel.getName())
                                 .typeClass(propObjModel.getTypeClass())
                                 .desc(propVal.getDescription())
-                                //TODO required
-//                                .required(((ModelImpl) model.getSchema()).getRequired().contains(propKey))
+                                .required(propVal.getRequired())
                                 .build();
 
                     }
@@ -549,8 +556,7 @@ public class Swagger2ModelConvertor {
                                 .type(buildStr("List<", itemObjModel.getName(), ">"))
                                 .typeClass(itemObjModel.getTypeClass())
                                 .desc(propVal.getDescription())
-                                //TODO required
-//                                .required(((ModelImpl) model.getSchema()).getRequired().contains(propKey))
+                                .required(propVal.getRequired())
                                 .build();
                     }
                     return FieldModel.builder()
@@ -558,8 +564,7 @@ public class Swagger2ModelConvertor {
                             .type(curFieldTypeEnum.getFieldTypeName())
                             .typeClass(curFieldTypeEnum.getFieldTypeClass())
                             .desc(propVal.getDescription())
-                            //TODO required
-//                            .required(((ModelImpl) bodyParam.getSchema()).getRequired().contains(propKey))
+                            .required(propVal.getRequired())
                             .build();
                 }).collect(Collectors.toList());
         return fieldModelList;
