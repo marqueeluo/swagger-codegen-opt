@@ -1,0 +1,39 @@
+/**
+* {{#description}}{{.}}{{/description}}{{^description}}{{classname}}{{/description}}
+*/
+public class {{name}} {
+
+{{#fields}}
+    /**
+    {{#description}}
+        * {{{description}}}
+    {{/description}}
+    {{^description}}
+        * {{name}}
+    {{/description}}
+    */
+    private {{type}} {{name}};
+
+{{/fields}}
+{{#fields}}
+    public {{{type}}} get{{nameFirstUpper}}() {
+        return {{name}};
+    }
+
+    public void set{{nameFirstUpper}}) {
+        this.{{name}} = {{name}};
+    }
+
+{{/fields}}
+
+
+@Override
+public String toString() {
+StringBuilder sb = new StringBuilder();
+sb.append("class {{classname}} {\n");
+{{#fields}}sb.append("    {{name}}: ").append({{name}}).append("\n");
+{{/fields}}sb.append("}");
+return sb.toString();
+}
+
+}

@@ -22,6 +22,5 @@ public class StartUp {
                 .build();
         CodegenModel codegenModel = new Swagger2ModelConvertor(inputSpec, config).convert();
         System.out.println(codegenModel);
-
     }
 }

@@ -18,6 +18,7 @@ public class Constants {
     public static final String DEFAULT_API_NAME = "Api";
     public static final String PATH_SEPARATOR = "/";
     public static final String DESC_SEPARATOR = " - ";
+    public static final String HYPHEN_SEPARATOR = "-";
     public static final String DOT = ".";
     public static final String RESULT_KEY_RESP_CODE = "respCode";
     public static final String RESULT_KEY_DATA = "data";
@@ -31,6 +32,8 @@ public class Constants {
     public static final String API_SUB_PACKAGE = ".api";
     public static final String MODEL_SUB_PACKAGE = ".model";
     public static final String CONTROLLER_SUB_PACKAGE = ".controller";
+    public static final String MVN_API_MODULE = "api";
+    public static final String MVN_WEB_MODULE = "web";
 
 
 

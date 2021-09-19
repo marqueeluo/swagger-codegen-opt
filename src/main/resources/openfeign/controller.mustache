@@ -1,0 +1,22 @@
+package {{controllerPackge}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*;
+import {{modelPackge}}.*;
+
+{{#basePath}}@RequestMapping(value = "{{basePath}}"){{/basePath}}
+@Controller
+public interface {{name}} {
+{{#paths}}
+    {{#path}}
+
+        @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
+        {{returnType}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}},{{/hasMore}}{{/params}}) {
+            return null;
+        }
+
+    {{/path}}
+    }
+{{/paths}}

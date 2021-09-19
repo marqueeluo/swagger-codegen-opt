@@ -1,5 +1,6 @@
 package com.luo.demo.swagger.codegen.model;
 
+import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,4 +18,7 @@ public class FieldModel {
     private String typeClass;
     private String desc;
     private Boolean required = false;
+    public String getNameFirstUpper() {
+        return CommonUtils.firstCharUpper(name);
+    }
 }

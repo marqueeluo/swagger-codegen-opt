@@ -5,6 +5,7 @@ import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +18,7 @@ import java.util.Set;
  */
 @Data
 @Builder
-public class CodegenModel {
+public class CodegenModel extends HashMap {
     private String basePackage;
     private List<ApiModel> apis;
     private Set<ObjModel> objs;
