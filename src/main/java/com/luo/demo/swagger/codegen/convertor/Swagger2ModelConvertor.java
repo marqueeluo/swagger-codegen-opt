@@ -422,7 +422,12 @@ public class Swagger2ModelConvertor {
     private void parseResponse200(Operation curOperation, PathModel pathModel, CodegenModel codegenModel) {
         //设置默认path.returnType = CommonResult
         ObjModel.COMMON_RESULT_OBJ_MODEL.setConfig(this.config);
-        ObjModel.COMMON_RESULT_OBJ_MODEL.setBasePackage(this.config.getModelPackage());
+        //若需要生成CommonResult，则覆盖原包名为当前model包名、注册该CommonResult包名
+        if (this.config.getGenerateCommonResult()) {
+            ObjModel.COMMON_RESULT_OBJ_MODEL.setBasePackage(this.config.getModelPackage());
+            //提前注册CommonResult
+            codegenModel.registerObjModel(ObjModel.COMMON_RESULT_OBJ_MODEL);
+        }
         pathModel.setReturnType(Constants.COMMON_RESULT_NAME);
         pathModel.setReturnTypeClass(ObjModel.COMMON_RESULT_OBJ_MODEL.getTypeClass());
 
@@ -435,8 +440,6 @@ public class Swagger2ModelConvertor {
                     ObjModel resultObjModel = null;
                     /** CommonResult（包含respCode, msg, data, rows, total）模式 */
                     if (respPropMap.containsKey(Constants.RESULT_KEY_RESP_CODE)) {
-                        //提前注册CommonResult
-                        codegenModel.registerObjModel(ObjModel.COMMON_RESULT_OBJ_MODEL);
                         Property dataProp = respPropMap.get(Constants.RESULT_KEY_DATA);
                         Property rowsProp = respPropMap.get(Constants.RESULT_KEY_ROWS);
 

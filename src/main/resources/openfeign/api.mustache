@@ -1,9 +1,9 @@
 package {{basePackage}};
 
-{{#imports}}import {{import}};
-{{/imports}}
-import org.springframework.web.bind.annotation.*;
-{{#config}}import {{modelPackage}}.*;{{/config}}
+{{#config}}import {{modelPackage}}.*;
+{{#apiImports}}import {{.}};
+{{/apiImports}}
+{{/config}}
 
 /**
  * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}

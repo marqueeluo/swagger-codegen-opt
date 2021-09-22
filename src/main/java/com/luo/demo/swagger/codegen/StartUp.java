@@ -24,7 +24,9 @@ public class StartUp {
                 .author("luohq")
                 .templateDirectory("openfeign")
                 .outputDirectory("D:/codegen/swagger")
-                .build();
+                .generateCommonResult(false)
+                .build()
+                .refresh();
         CodegenModel codegenModel = new Swagger2ModelConvertor(config).convert();
         System.out.println(codegenModel);
         new MustacheEngine().renderTemplate(codegenModel);

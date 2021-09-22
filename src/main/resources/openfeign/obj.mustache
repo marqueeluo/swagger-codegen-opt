@@ -1,4 +1,7 @@
 package {{basePackage}};
+
+{{#config}}{{#modelImports}}import {{.}};
+{{/modelImports}}{{/config}}
 /**
  * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
 {{#config}} *
