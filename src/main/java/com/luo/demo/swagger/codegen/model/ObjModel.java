@@ -2,6 +2,7 @@ package com.luo.demo.swagger.codegen.model;
 
 import com.luo.demo.swagger.codegen.constant.Constants;
 import com.luo.demo.swagger.codegen.convertor.Config;
+import com.luo.demo.swagger.codegen.enums.FieldTypeEnum;
 import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -25,11 +26,20 @@ public class ObjModel {
     private String desc;
     private List<FieldModel> fields;
     private String typeClass;
+    private Boolean containFileField;
 
 
     public String getTypeClass() {
         return Optional.ofNullable(typeClass)
                 .orElse(CommonUtils.buildStr(basePackage, Constants.DOT, name));
+    }
+
+    public void setFields(List<FieldModel> fields) {
+        this.fields = fields;
+        if (!CommonUtils.isEmptyCollection(this.fields)) {
+            this.fields.get(this.fields.size() - 1).setIsLast(true);
+            this.containFileField = this.fields.stream().anyMatch(fieldModel -> FieldTypeEnum.FILE.getFieldTypeName().equals(fieldModel.getType()));
+        }
     }
 
     @Override

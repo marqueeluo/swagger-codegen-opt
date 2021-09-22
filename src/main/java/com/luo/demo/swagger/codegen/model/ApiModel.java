@@ -21,4 +21,5 @@ public class ApiModel {
     private String desc;
     private String basePath;
     private List<PathModel> paths;
+    private Boolean containFileParam;
 }

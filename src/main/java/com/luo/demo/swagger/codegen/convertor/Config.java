@@ -1,6 +1,7 @@
 package com.luo.demo.swagger.codegen.convertor;
 
 import com.luo.demo.swagger.codegen.constant.Constants;
+import com.luo.demo.swagger.codegen.model.ObjModel;
 import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -89,14 +90,24 @@ public class Config {
      * false：不生成，则在api、controller导入通用CommonResult依赖
      */
     private Boolean generateCommonResult;
+    /**
+     * 通用commonResult包名
+     */
+    private String commonResultPackage;
+    /**
+     * 通用commonResult类名
+     */
+    private String commonResultName;
 
 
     public String getAuthor() {
-        return Optional.ofNullable(author).orElse(Constants.AUTHOR);
+        return Optional.ofNullable(author)
+                .orElse(Constants.AUTHOR);
     }
 
     public String getDate() {
-        return Optional.ofNullable(date).orElse(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
+        return Optional.ofNullable(date)
+                .orElse(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
     }
 
     public String getApiPackage() {
@@ -155,18 +166,38 @@ public class Config {
                 .orElse(true);
     }
 
+    public String getCommonResultPackage() {
+        if (this.getGenerateCommonResult()) {
+            return this.getModelPackage();
+        }
+        return Optional.ofNullable(commonResultPackage)
+                .orElse(Constants.COMMON_RESULT_PACKAGE);
+    }
+
+    public String getCommonResultName() {
+        return Optional.ofNullable(commonResultName)
+                .orElse(Constants.COMMON_RESULT_NAME);
+    }
+
     /**
      * 构建完配置后，需执行此操作，
      * 根据当前配置进行适当调整
      */
     public Config refresh() {
-        /** 若不生成commonResult，到需导入共通commonResult*/
-        if (Boolean.FALSE.equals(this.generateCommonResult)) {
-            String commonResultClass = CommonUtils.buildStr(Constants.COMMON_RESULT_PACKAGE, Constants.DOT, Constants.COMMON_RESULT_NAME);
+        //重置CommonResult类名
+        ObjModel.COMMON_RESULT_OBJ_MODEL.setName(this.getCommonResultName());
+        //重置CommonResult包名
+        ObjModel.COMMON_RESULT_OBJ_MODEL.setBasePackage(this.getCommonResultPackage());
+
+        /** 若不生成commonResult，则需设置已经存在的通用commonResult类名、包名 */
+        if (!this.generateCommonResult) {
+            //到需导入共通commonResult
+            String commonResultClass = CommonUtils.buildStr(this.getCommonResultPackage(), Constants.DOT, this.getCommonResultName());
             Constants.API_IMPORTS.add(commonResultClass);
             Constants.CONTROLLER_IMPORTS.add(commonResultClass);
         }
         return this;
     }
+
 
 }

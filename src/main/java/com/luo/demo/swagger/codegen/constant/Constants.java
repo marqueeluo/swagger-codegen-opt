@@ -41,7 +41,7 @@ public class Constants {
     public static final String RESULT_KEY_TOTAL = "total";
     public static final String HTTP_STATUS_200 = "200";
     public static final String COMMON_RESULT_NAME = "CommonResult";
-    public static final String COMMON_RESULT_PACKAGE = "com.luo.demo.result";
+    public static final String COMMON_RESULT_PACKAGE = "com.common.model.result";
     /**
      * 生成包名默认配置
      */
@@ -74,10 +74,14 @@ public class Constants {
             "org.springframework.web.bind.annotation.*"
     );
     public static final List<String> CONTROLLER_IMPORTS = CommonUtils.toList(
+            "org.slf4j.Logger",
+            "org.slf4j.LoggerFactory",
             "org.springframework.web.bind.annotation.*",
             "org.springframework.stereotype.Controller"
     );
-    public static final List<String> OBJ_IMPORTS = CommonUtils.toList();
+    public static final List<String> OBJ_IMPORTS = CommonUtils.toList(
+            "java.util.List"
+    );
 
 
 }

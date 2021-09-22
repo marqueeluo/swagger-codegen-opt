@@ -1,7 +1,8 @@
 package {{basePackage}};
 
-{{#config}}{{#modelImports}}import {{.}};
-{{/modelImports}}{{/config}}
+{{#config}}{{#objImports}}import {{.}};
+{{/objImports}}{{/config}}
+{{#containFileField}}import org.springframework.web.multipart.MultipartFile;{{/containFileField}}
 /**
  * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
 {{#config}} *
@@ -38,8 +39,8 @@ public class {{name}}{{#templateTypes}}<{{.}}>{{/templateTypes}} {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class {{name}} {\n");
-        {{#fields}}        sb.append("    {{name}}: ").append({{name}}).append("\n");
+        sb.append("{{name}}{");
+        {{#fields}}        sb.append("{{name}}=").append({{name}}){{^isLast}}.append(","){{/isLast}};
         {{/fields}}        sb.append("}");
         return sb.toString();
     }

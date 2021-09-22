@@ -488,7 +488,7 @@
                         "type": "integer",
                         "description": "部门成员数量"
                       },
-                      "memberLIst": {
+                      "memberList": {
                         "type": "array",
                         "items": {
                           "type": "integer",

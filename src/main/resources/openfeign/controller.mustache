@@ -4,6 +4,7 @@ import {{apiPackage}}.*;
 {{#controllerImports}}import {{.}};
 {{/controllerImports}}
 {{/config}}
+{{#containFileParam}}import org.springframework.web.multipart.MultipartFile;{{/containFileParam}}
 
 /**
  * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
@@ -14,21 +15,25 @@ import {{apiPackage}}.*;
  */
 {{#basePath}}@RequestMapping(value = "{{basePath}}"){{/basePath}}
 @Controller
-public interface {{name}}Controller implements {{name}}Api {
+public class {{name}}Controller implements {{name}}Api {
+
+    private static final Logger log = LoggerFactory.getLogger({{name}}Controller.class);
 {{#paths}}
     {{#path}}
 
-        /**
-         * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
-         *
-         {{#params}}* @param {{name}} {{desc}}{{/params}}
-         * @return {{{returnType}}}
-         */
-        @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
-        @ResponseBody
-        public {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}}) {
-            return null;
-        }
+    /**
+     * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+     *
+     {{#params}}* @param {{name}} {{desc}}{{/params}}
+     * @return {{{returnType}}}
+     */
+    @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
+    @ResponseBody
+    @Override
+    public {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}}) {
+        {{>logParams}}
+        return {{#config}}{{commonResultName}}.success(){{/config}};
+    }
 
     {{/path}}
 {{/paths}}

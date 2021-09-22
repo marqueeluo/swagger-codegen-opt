@@ -4,6 +4,7 @@ import com.luo.demo.swagger.codegen.constant.Constants;
 import com.luo.demo.swagger.codegen.enums.FieldTypeEnum;
 import com.luo.demo.swagger.codegen.enums.ObjSuffixEnum;
 import com.luo.demo.swagger.codegen.model.*;
+import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import io.swagger.models.*;
 import io.swagger.models.parameters.*;
 import io.swagger.models.properties.ArrayProperty;
@@ -139,6 +140,17 @@ public class Swagger2ModelConvertor {
      * @param index
      */
     private void resetApiModel(ApiModel apiModel, Integer index) {
+
+        /** =============== 判断是否包含文件 =============== */
+        Boolean containFileParam = apiModel.getPaths().stream()
+                .filter(pathModel -> null != pathModel && !CommonUtils.isEmptyCollection(pathModel.getParams()))
+                .flatMap(pathModel -> pathModel.getParams().stream())
+                .anyMatch(paramModel -> FieldTypeEnum.FILE.getFieldTypeName().equals(paramModel.getType()));
+        apiModel.setContainFileParam(containFileParam);
+
+
+
+        /** =============== 重置apiModel =============== */
         List<String> allApiPathList = apiModel.getPaths().stream()
                 .map(PathModel::getPath)
                 .collect(Collectors.toList());
@@ -424,11 +436,10 @@ public class Swagger2ModelConvertor {
         ObjModel.COMMON_RESULT_OBJ_MODEL.setConfig(this.config);
         //若需要生成CommonResult，则覆盖原包名为当前model包名、注册该CommonResult包名
         if (this.config.getGenerateCommonResult()) {
-            ObjModel.COMMON_RESULT_OBJ_MODEL.setBasePackage(this.config.getModelPackage());
             //提前注册CommonResult
             codegenModel.registerObjModel(ObjModel.COMMON_RESULT_OBJ_MODEL);
         }
-        pathModel.setReturnType(Constants.COMMON_RESULT_NAME);
+        pathModel.setReturnType(ObjModel.COMMON_RESULT_OBJ_MODEL.getName());
         pathModel.setReturnTypeClass(ObjModel.COMMON_RESULT_OBJ_MODEL.getTypeClass());
 
         /** 解析返回值 */
@@ -447,13 +458,13 @@ public class Swagger2ModelConvertor {
                         if (null != dataProp && dataProp instanceof ObjectProperty) {
                             resultObjModel = this.parseObjectProperty((ObjectProperty) dataProp, pathModel, codegenModel, ObjSuffixEnum.RESULT);
                             //设置path.returnType = CommonResult<resultObj>
-                            pathModel.setReturnType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
+                            pathModel.setReturnType(buildTypeWithTemplateParam(ObjModel.COMMON_RESULT_OBJ_MODEL.getName(), resultObjModel.getName()));
                         }
                         //解析rows ArrayProperty
                         else if (null != rowsProp && rowsProp instanceof ArrayProperty) {
                             resultObjModel = this.parseArrayProperty((ArrayProperty) rowsProp, pathModel, codegenModel, ObjSuffixEnum.RESULT);
                             //设置path.returnType = CommonResult<array.itemType>
-                            pathModel.setReturnType(buildTypeWithTemplateParam(Constants.COMMON_RESULT_NAME, resultObjModel.getName()));
+                            pathModel.setReturnType(buildTypeWithTemplateParam(ObjModel.COMMON_RESULT_OBJ_MODEL.getName(), resultObjModel.getName()));
                         }
                     }
                     /** 其他返回结果 */
@@ -545,6 +556,9 @@ public class Swagger2ModelConvertor {
      */
     private List<FieldModel> parseProperties(Map<String, Property> propertyMap, PathModel pathModel, CodegenModel codegenModel, ObjSuffixEnum objSuffixEnum) {
         //生成属性
+        if (CommonUtils.isEmptyMap(propertyMap)) {
+            return null;
+        }
         List<FieldModel> fieldModelList = propertyMap.entrySet()
                 .stream()
                 .map(propEntry -> {

@@ -17,7 +17,8 @@ public class FieldModel {
     private String type;
     private String typeClass;
     private String desc;
-    private Boolean required = false;
+    private Boolean required;
+    private Boolean isLast;
     public String getNameFirstUpper() {
         return CommonUtils.firstCharUpper(name);
     }

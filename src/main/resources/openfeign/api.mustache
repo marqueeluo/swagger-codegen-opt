@@ -4,6 +4,7 @@ package {{basePackage}};
 {{#apiImports}}import {{.}};
 {{/apiImports}}
 {{/config}}
+{{#containFileParam}}import org.springframework.web.multipart.MultipartFile;{{/containFileParam}}
 
 /**
  * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
@@ -17,15 +18,15 @@ public interface {{name}}Api {
 {{#paths}}
     {{#path}}
 
-        /**
-         * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
-         *
-         {{#params}}* @param {{name}} {{desc}}{{/params}}
-         * @return {{{returnType}}}
-         */
-        @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
-        @ResponseBody
-        {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}});
+    /**
+     * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+     *
+     {{#params}}* @param {{name}} {{desc}}{{/params}}
+     * @return {{{returnType}}}
+     */
+    @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
+    @ResponseBody
+    {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}});
 
     {{/path}}
 {{/paths}}
