@@ -27,4 +27,5 @@ public class ParamModel {
     private Boolean isBodyParam;
     private Boolean isFormParam;
     private Boolean isFile;
+    private Boolean isLast;
 }

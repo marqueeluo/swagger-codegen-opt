@@ -3,8 +3,12 @@ package com.luo.demo.swagger.codegen.utils;
 import com.luo.demo.swagger.codegen.constant.Constants;
 import com.luo.demo.swagger.codegen.enums.ObjSuffixEnum;
 import com.luo.demo.swagger.codegen.model.PathModel;
+import net.sf.cglib.beans.BeanCopier;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,7 +68,7 @@ public class CommonUtils {
      * @return
      */
     public static Boolean isBlankStr(String str) {
-        return null == str || "".equals(str.trim()) ;
+        return null == str || "".equals(str.trim());
     }
 
     /**
@@ -258,7 +262,9 @@ public class CommonUtils {
         if (isBlankStr(path)) {
             return path;
         }
-        path = path.replaceAll("/\\{.*?\\}", "");
+        //path = path.replaceAll("/\\{.*?\\}", "");
+        //例如/user/detai/{id} -> /user/detail/id
+        path = path.replaceAll("[\\{\\}]", "");
         String[] pathItems = path.split(Constants.PATH_SEPARATOR);
         if (null == pathItems || 0 >= pathItems.length) {
             return null;
@@ -332,4 +338,89 @@ public class CommonUtils {
         String templateParamsStr = Stream.of(templateParams).collect(Collectors.joining(","));
         return buildStr(type, "<", templateParamsStr, ">");
     }
+
+    /**
+     * 拷贝属性
+     *
+     * @param from
+     * @param to
+     */
+    public static void copyProps(Object from, Object to) {
+        BeanCopier.create(from.getClass(), to.getClass(), false)
+                .copy(from, to, null);
+    }
+
+    /**
+     * 拼接目录（且需要转换包名为目录）
+     *
+     * @param directories
+     * @return
+     */
+//    public static String convertDrectoryPath(String... directories) {
+//        if (null == directories || 0 >= directories.length) {
+//            return null;
+//        }
+//        return Stream.of(directories)
+//                .filter(curDir -> !isBlankStr(curDir))
+//                .map(curDir -> {
+//                    curDir = curDir.trim();
+//                    //转换包名为目录，如com.luo -> /com/luo
+//                    if (curDir.contains(Constants.DOT)) {
+//                        curDir = buildStr(Constants.UNIFY_FILE_SEPARATOR, curDir.replace(Constants.DOT, Constants.UNIFY_FILE_SEPARATOR));
+//                    }
+//                    //规范目录分隔符，如D:\\luo\\dir -> D:/luo/dir
+//                    else {
+//                        curDir = curDir.replaceAll("[/\\\\]", Constants.UNIFY_FILE_SEPARATOR);
+//                    }
+//                    //删除目录最后面的分隔符
+//                    if (Constants.UNIFY_FILE_SEPARATOR.equals(curDir.substring(curDir.length() - 1))) {
+//                        curDir = curDir.substring(0, curDir.length() - 1);
+//                    }
+//                    //拼接前置分隔符
+//                    if (!curDir.contains(Constants.COLON) && !curDir.startsWith(Constants.UNIFY_FILE_SEPARATOR)) {
+//                        curDir = buildStr(Constants.UNIFY_FILE_SEPARATOR, curDir);
+//                    }
+//                    return curDir;
+//                }).collect(Collectors.joining());
+//    }
+
+    public static String convertDrectoryPath(String... directories) {
+        if (null == directories || 0 >= directories.length) {
+            return null;
+        }
+        StringBuilder dirBuilder = new StringBuilder();
+
+        for (int i = 0; i < directories.length; i++) {
+            String curDir = directories[i];
+            if (isBlankStr(curDir)) {
+                continue;
+            }
+            curDir = curDir.trim();
+            //转换包名为目录，如com.luo -> /com/luo
+            if (curDir.contains(Constants.DOT)) {
+                curDir = buildStr(Constants.UNIFY_FILE_SEPARATOR, curDir.replace(Constants.DOT, Constants.UNIFY_FILE_SEPARATOR));
+            }
+            //规范目录分隔符，如D:\\luo\\dir -> D:/luo/dir
+            else {
+                curDir = curDir.replaceAll("[/\\\\]", Constants.UNIFY_FILE_SEPARATOR);
+            }
+            //删除目录最后面的分隔符
+            if (Constants.UNIFY_FILE_SEPARATOR.equals(curDir.substring(curDir.length() - 1))) {
+                curDir = curDir.substring(0, curDir.length() - 1);
+            }
+            //拼接前置分隔符（第一级目录无需添加）
+            if (0 < i && !curDir.contains(Constants.COLON) && !curDir.startsWith(Constants.UNIFY_FILE_SEPARATOR)) {
+                curDir = buildStr(Constants.UNIFY_FILE_SEPARATOR, curDir);
+            }
+            dirBuilder.append(curDir);
+        }
+        return dirBuilder.toString();
+    }
+
+//    public static void main(String[] args) {
+//        String curDir = "D:/hello/world";
+//        System.out.println(curDir.replaceAll("[/\\\\]", Constants.UNIFY_FILE_SEPARATOR));
+//        curDir = "D:\\hello\\world";
+//        System.out.println(curDir.replaceAll("[/\\\\]", Constants.UNIFY_FILE_SEPARATOR));
+//    }
 }

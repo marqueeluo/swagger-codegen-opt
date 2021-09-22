@@ -1,18 +1,23 @@
+package {{basePackage}};
 /**
-* {{#description}}{{.}}{{/description}}{{^description}}{{classname}}{{/description}}
-*/
-public class {{name}} {
+ * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+{{#config}} *
+ * @author {{author}}
+ * @date {{date}}
+{{/config}}
+ */
+public class {{name}}{{#templateTypes}}<{{.}}>{{/templateTypes}} {
 
 {{#fields}}
     /**
-    {{#description}}
-        * {{{description}}}
-    {{/description}}
-    {{^description}}
-        * {{name}}
-    {{/description}}
-    */
-    private {{type}} {{name}};
+    {{#desc}}
+     * {{{desc}}}
+    {{/desc}}
+    {{^desc}}
+     * {{name}}
+    {{/desc}}
+     */
+    private {{{type}}} {{name}};
 
 {{/fields}}
 {{#fields}}
@@ -20,20 +25,20 @@ public class {{name}} {
         return {{name}};
     }
 
-    public void set{{nameFirstUpper}}) {
+    public void set{{nameFirstUpper}}({{{type}}} {{name}}) {
         this.{{name}} = {{name}};
     }
 
 {{/fields}}
 
 
-@Override
-public String toString() {
-StringBuilder sb = new StringBuilder();
-sb.append("class {{classname}} {\n");
-{{#fields}}sb.append("    {{name}}: ").append({{name}}).append("\n");
-{{/fields}}sb.append("}");
-return sb.toString();
-}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class {{name}} {\n");
+        {{#fields}}        sb.append("    {{name}}: ").append({{name}}).append("\n");
+        {{/fields}}        sb.append("}");
+        return sb.toString();
+    }
 
 }

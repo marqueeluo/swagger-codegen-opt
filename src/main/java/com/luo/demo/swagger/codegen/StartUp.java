@@ -1,6 +1,7 @@
 package com.luo.demo.swagger.codegen;
 
 import com.luo.demo.swagger.codegen.convertor.Config;
+import com.luo.demo.swagger.codegen.convertor.MustacheEngine;
 import com.luo.demo.swagger.codegen.convertor.Swagger2ModelConvertor;
 import com.luo.demo.swagger.codegen.model.CodegenModel;
 
@@ -13,14 +14,19 @@ import com.luo.demo.swagger.codegen.model.CodegenModel;
 public class StartUp {
 
     public static void main(String[] args) {
-        String inputSpec = "swaggerApi-new.json";
         Config config = Config.builder()
-                .basePackage("com.luo.demo")
-//                .apiPackage("com.luo.demo.api")
-//                .modelPackage("com.luo.demo.model")
-//                .controllerPackage("com.luo.demo.controller")
+                .swaggerApiFile("swaggerApi-new.json")
+                .basePackage("com.luo.feign")
+                .baseMvnModule("luo-openfeign-demo")
+                //.apiPackage("com.luo.demo.api")
+                //.modelPackage("com.luo.demo.model")
+                //.controllerPackage("com.luo.demo.controller")
+                .author("luohq")
+                .templateDirectory("openfeign")
+                .outputDirectory("D:/codegen/swagger")
                 .build();
-        CodegenModel codegenModel = new Swagger2ModelConvertor(inputSpec, config).convert();
+        CodegenModel codegenModel = new Swagger2ModelConvertor(config).convert();
         System.out.println(codegenModel);
+        new MustacheEngine().renderTemplate(codegenModel);
     }
 }

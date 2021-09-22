@@ -5,6 +5,9 @@ import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -16,13 +19,28 @@ import java.util.Optional;
 @Data
 @Builder
 public class Config {
-    private String basePackage = "com.luo.demo";
+    private String author;
+    private String date;
+    private String templateDirectory;
+    private String swaggerApiFile;
+    private String outputDirectory;
+    private String basePackage;
     private String apiPackage;
     private String modelPackage;
     private String controllerPackage;
     private String baseMvnModule;
     private String apiMvnModule;
     private String controllerMvnModule;
+    private String srcDir;
+
+
+    public String getAuthor() {
+        return Optional.ofNullable(author).orElse("codegen");
+    }
+
+    public String getDate() {
+        return Optional.ofNullable(date).orElse(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
+    }
 
     public String getApiPackage() {
         return Optional.ofNullable(apiPackage)
@@ -55,4 +73,8 @@ public class Config {
                 );
     }
 
+    public String getSrcDir() {
+        return Optional.ofNullable(srcDir)
+                .orElse(Constants.SRC_DIR);
+    }
 }

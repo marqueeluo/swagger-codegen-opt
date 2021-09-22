@@ -1,5 +1,6 @@
 package com.luo.demo.swagger.codegen.model;
 
+import com.luo.demo.swagger.codegen.convertor.Config;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @Builder
 public class ApiModel {
+    private Config config;
     private String basePackage;
     private String name;
     private String desc;

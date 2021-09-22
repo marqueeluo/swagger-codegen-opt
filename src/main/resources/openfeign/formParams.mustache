@@ -1,0 +1,1 @@
+{{#isFormParam}}{{^isFile}}@RequestParam(value="{{name}}"{{#required}}, required=true{{/required}}{{^required}}, required=false{{/required}})  {{{type}}} {{name}}{{/isFile}}{{#isFile}}@RequestPart(value="{{name}}"{{#required}}, required=true{{/required}}{{^required}}, required=false{{/required}}) MultipartFile {{name}}{{/isFile}}{{/isFormParam}}

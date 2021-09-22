@@ -1,11 +1,12 @@
 package com.luo.demo.swagger.codegen.model;
 
+import com.luo.demo.swagger.codegen.convertor.Config;
 import com.luo.demo.swagger.codegen.enums.FieldTypeEnum;
 import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,14 +19,15 @@ import java.util.Set;
  */
 @Data
 @Builder
-public class CodegenModel extends HashMap {
+public class CodegenModel {
+    private Config config;
     private String basePackage;
     private List<ApiModel> apis;
     private Set<ObjModel> objs;
 
     public synchronized ObjModel registerObjModel(ObjModel objModel) {
         //简单类型，则跳过组册直接返回
-        if( FieldTypeEnum.fieldTypeOf(objModel.getName()).isPrimitiveType()) {
+        if (FieldTypeEnum.fieldTypeOf(objModel.getName()).isPrimitiveType()) {
             return objModel;
         }
         //为空则直接注册

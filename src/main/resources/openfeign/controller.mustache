@@ -1,22 +1,37 @@
-package {{controllerPackge}};
+{{#config}}package {{controllerPackage}};
+import {{modelPackage}}.*;
+import {{apiPackage}}.*;{{/config}}
 
 {{#imports}}import {{import}};
 {{/imports}}
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.*;
-import {{modelPackge}}.*;
+import org.springframework.stereotype.Controller;
 
+/**
+ * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+{{#config}} *
+ * @author {{author}}
+ * @date {{date}}
+{{/config}}
+ */
 {{#basePath}}@RequestMapping(value = "{{basePath}}"){{/basePath}}
 @Controller
-public interface {{name}} {
+public interface {{name}}Controller implements {{name}}Api {
 {{#paths}}
     {{#path}}
 
+        /**
+         * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+         *
+         {{#params}}* @param {{name}} {{desc}}{{/params}}
+         * @return {{{returnType}}}
+         */
         @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
-        {{returnType}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}},{{/hasMore}}{{/params}}) {
+        @ResponseBody
+        public {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}}) {
             return null;
         }
 
     {{/path}}
-    }
 {{/paths}}
+}

@@ -1,18 +1,32 @@
-package {{apiPackge}};
+package {{basePackage}};
 
 {{#imports}}import {{import}};
 {{/imports}}
 import org.springframework.web.bind.annotation.*;
-import {{modelPackge}}.*;
+{{#config}}import {{modelPackage}}.*;{{/config}}
 
+/**
+ * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+{{#config}} *
+ * @author {{author}}
+ * @date {{date}}
+{{/config}}
+ */
 {{#basePath}}@RequestMapping(value = "{{basePath}}"){{/basePath}}
-public interface {{name}} {
+public interface {{name}}Api {
 {{#paths}}
     {{#path}}
 
+        /**
+         * {{#desc}}{{.}}{{/desc}}{{^desc}}{{name}}{{/desc}}
+         *
+         {{#params}}* @param {{name}} {{desc}}{{/params}}
+         * @return {{{returnType}}}
+         */
         @RequestMapping(value = "{{{path}}}", method = RequestMethod.{{httpMethod}})
-        {{returnType}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{#hasMore}},{{/hasMore}}{{/params}});
+        @ResponseBody
+        {{{returnType}}} {{name}}({{#params}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>formObjParams}}{{^isLast}},{{/isLast}}{{/params}});
 
     {{/path}}
-    }
 {{/paths}}
+}

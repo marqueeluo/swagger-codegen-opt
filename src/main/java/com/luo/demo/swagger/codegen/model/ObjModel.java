@@ -1,6 +1,7 @@
 package com.luo.demo.swagger.codegen.model;
 
 import com.luo.demo.swagger.codegen.constant.Constants;
+import com.luo.demo.swagger.codegen.convertor.Config;
 import com.luo.demo.swagger.codegen.utils.CommonUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +18,9 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class ObjModel {
-    private List<String> templateTypes;
+    private Config config;
     private String basePackage;
+    private String templateTypes;
     private String name;
     private String desc;
     private List<FieldModel> fields;
@@ -42,7 +44,7 @@ public class ObjModel {
         }
         ObjModel objModel = (ObjModel) obj;
         if (!Objects.equals(this.basePackage, objModel.getBasePackage())
-                || !CommonUtils.isSameSizeCollection(this.templateTypes, objModel.getTemplateTypes())
+                //|| !CommonUtils.isSameSizeCollection(this.templateTypes, objModel.getTemplateTypes())
                 || !CommonUtils.isSameSizeCollection(this.fields, objModel.getFields())
         ) {
             return false;
@@ -60,11 +62,11 @@ public class ObjModel {
                 .collect(Collectors.joining(","));
     }
 
-    public static final ObjModel CommonResultObjModel = ObjModel.builder()
+    public static final ObjModel COMMON_RESULT_OBJ_MODEL = ObjModel.builder()
             .basePackage(Constants.COMMON_RESULT_PACKAGE)
             .desc("通用结果")
             .name(Constants.COMMON_RESULT_NAME)
-            .templateTypes(Arrays.asList("T"))
+            .templateTypes("T")
             .fields(Arrays.asList(
                     FieldModel.builder().name(Constants.RESULT_KEY_RESP_CODE).type("Integer").desc("响应码").typeClass("java.lang.Integer").required(true).build(),
                     FieldModel.builder().name(Constants.RESULT_KEY_MSG).type("String").desc("消息提示").typeClass("java.lang.String").build(),
