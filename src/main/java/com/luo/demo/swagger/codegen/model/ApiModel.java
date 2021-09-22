@@ -20,6 +20,5 @@ public class ApiModel {
     private String name;
     private String desc;
     private String basePath;
-    private List<AnnoModel> annos;
     private List<PathModel> paths;
 }
